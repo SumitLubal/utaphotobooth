@@ -28,6 +28,8 @@ app.on('ready', function () {
     }
   });
   mainWindow.maximize();
+  mainWindow.setFullScreen(true);
+  mainWindow.setMenu(null);
   //mainWindow.webcontents.webPreferences.nodeIntegration = true;
 
   // and load the index.html of the app.
