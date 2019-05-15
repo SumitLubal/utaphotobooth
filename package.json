@@ -9,9 +9,10 @@
   "author": "Our Code World",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron-prebuilt": "^0.37.2"
+    "electron": "v4.2.1"
   },
   "dependencies": {
-    "webcamjs": "^1.0.6"
+    "webcamjs": "^1.0.6",
+    "seriously": "^1.0.0"
   }
 }

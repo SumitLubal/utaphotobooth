@@ -10,8 +10,10 @@
     <br>
     <div>
         <!-- Create a camera element centered -->
-        <div id="camdemo" style="width: vw; height:100vh; text-align: center; margin: 0 auto;"></div>
+        <div id="camdemo" style="display:none;width: vw; height:100vh; text-align: center; margin: 0 auto;"></div>
         <br>
+        <img id='result' style="width: vw; height:100vh; text-align: center; margin: 0 auto;" />
+
         <div style="text-align:center;">
             <input type="button" id="start" value="Start / Shut down camera" />
             <input type="button" id="savefile" value="Save photo in Desktop" />
@@ -19,13 +21,22 @@
     </div>
     <script>
         var enabled = false;
-        var WebCamera = require("webcamjs");
-        var remote = require('remote'); // Load remote component that contains the dialog dependency
-        var dialog = remote.require('dialog'); // Load the dialogs component of the OS
-        var fs = require('fs'); // Load the File System to execute our common tasks (CRUD)
+        // Load remote component that contains the dialog dependency
+        window.nodeRequire = require;
+        delete window.require;
+        delete window.exports;
+        delete window.module;
+
+        var electron = nodeRequire('electron'); // Load the dialogs component of the OS
+        var WebCamera = nodeRequire('webcamjs');
+
+        var remote = electron.remote;
+        var dialog = remote.dialog;
+        var fs = remote.require('fs'); // Load the File System to execute our common tasks (CRUD)
         var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
         var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-        document.getElementById("start").addEventListener('click', function () {
+        var timer = null;
+        function startCapture() {
             if (!enabled) {
                 enabled = true;
                 WebCamera.set({
@@ -34,29 +45,54 @@
                     image_format: 'jpeg',
                     jpeg_quality: 90,
                     constraints: {
-                        width: { exact: w },
-                        height: { exact: h }
+                        width: { exact: 1280 },
+                        height: { exact: 720 }
                     }
                 });
                 WebCamera.attach('#camdemo');
                 console.log("The camera has been started");
+                start_snapping();
+
             } else {
                 enabled = false;
                 WebCamera.reset();
                 console.log("The camera has been disabled");
             }
-        }, false);
+
+        }
+        document.getElementById("start").addEventListener('click', startCapture, false);
+
+
+        function take_snapshot() {
+            // take snapshot and get image data
+            WebCamera.snap(function (data_uri) {
+                // display results in page
+                var img = new Image();
+                img.src = data_uri;
+                document.getElementById('result').src = data_uri;
+            });
+        }
+        function start_snapping() {
+            if (!timer) {
+                take_snapshot();
+                timer = setInterval(take_snapshot, 0.5);
+            }
+        }
+        function stop_snapping() {
+            if (timer) {
+                clearTimeout(timer);
+                timer = null;
+            }
+        }
+
 
         function processBase64Image(dataString) {
             var matches = dataString.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/), response = {};
-
             if (matches.length !== 3) {
                 return new Error('Invalid input string');
             }
-
             response.type = matches[1];
             response.data = new Buffer(matches[2], 'base64');
-
             return response;
         }
 
@@ -64,7 +100,6 @@
             if (enabled) {
                 WebCamera.snap(function (data_uri) {
                     var imageBuffer = processBase64Image(data_uri);
-
                     dialog.showSaveDialog({
                         filters: [
                             { name: 'Images', extensions: ['png'] },
@@ -88,6 +123,7 @@
                 console.log("Please enable the camera first to take the snapshot !");
             }
         }, false);
+        startCapture();
     </script>
 </body>
 

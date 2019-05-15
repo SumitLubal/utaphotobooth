@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>PhotoBooth</title>
+</head>
+
+<body >
+    <video id="camdemo" style=" display: none; text-align: center; margin: 0 auto;" autoplay></video>
+    <canvas id="canvas" style="width: 1280px;height: 720px;"></canvas>
+    <input type="range" id="vignette-range" min="0" max="20" step="0.0001" value="1" />
+    <!-- page content goes here -->
+    <script src="js/seriously.js"></script>
+    <script src="html5slider.js"></script>
+    <script src="js/effects/seriously.vignette.js"></script>
+    <script src="js/effects/seriously.hue-saturation.js"></script>
+    <script src="js/effects/seriously.ripple.js"></script>
+    <script src="js/effects/seriously.mirror.js"></script>
+    <script src="js/effects/seriously.blur.js"></script>
+    <script>
+        //main code goes here
+        let streamer;
+        videocanvas = document.getElementById('camdemo');
+        function hasGetUserMedia() {
+            return !!(navigator.mediaDevices &&
+                navigator.mediaDevices.getUserMedia);
+        }
+        if (hasGetUserMedia()) {
+            const vgaConstraints = {
+                video: { width: { exact: 1280 }, height: { exact: 720 } }
+            };
+
+            navigator.mediaDevices.getUserMedia(vgaConstraints).
+                then((stream) => { videocanvas.srcObject = stream });
+        } else {
+            console.error('getUserMedia() is not supported by your browser, You should upgrade electron dependancy ');
+        }
+        // declare our variables
+        var seriously, // the main object that holds the entire composition
+            colorbars, // a wrapper object for our source image
+            target; // a wrapper object for our target canvas
+
+        seriously = new Seriously();
+
+        colorbars = seriously.source('#camdemo');
+        target = seriously.target('#canvas');
+        target.source = colorbars;
+        seriously.go();
+
+    </script>
+</body>
+
+</html>
