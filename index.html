@@ -99,7 +99,7 @@ overflow-y: hidden;">
             this.framebuffer.height = this.height;
             this.ctx = this.framebuffer.getContext("2d");
             // Default video effect is blur
-            this.effect = JSManipulate.blur;
+            this.effect = JSManipulate.emboss;
             // This variable used to pass ourself to event call-backs
             var self = this;
             // Start rendering when the video is playing
