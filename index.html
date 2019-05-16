@@ -13,25 +13,60 @@
             color: white;
             text-align: center;
         }
+
+        .noselect {
+            -webkit-touch-callout: none;
+            /* iOS Safari */
+            -webkit-user-select: none;
+            /* Safari */
+            -khtml-user-select: none;
+            /* Konqueror HTML */
+            -moz-user-select: none;
+            /* Firefox */
+            -ms-user-select: none;
+            /* Internet Explorer/Edge */
+            user-select: none;
+            /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+        }
+
+        .topleft {
+            position: absolute;
+            top: 8px;
+            left: 16px;
+            font-size: 90px;
+            color: black;
+        }
+
+        .effects {
+            width: 100%;
+            height: 100%;
+        }
     </style>
 </head>
 
-<body style="margin:0;    display: -webkit-box;">
+<body style="margin:0;    display: -webkit-box;    overflow-x: hidden;
+overflow-y: hidden;">
     <br>
     <div>
         <!-- Create a camera element centered -->
-        <div id="camdemo" style="width: vw; height:100vh; text-align: center; margin: 0 auto;"></div>
+        <div>
+            <div class="topleft" id='countdown'></div>
+            <div id="camdemo" style="width: vw; height:100vh; text-align: center; margin: 0 auto;"></div>
+        </div>
         <br>
-        <div class="footer">
+        <div class="footer  noselect">
             <div style="text-align:center;">
                 <input type="image" id="capture" src="images/capture_button.png" alt="Submit"
-                    style="width:6vw;height:10vh" onclick="captureSnapshot();">
+                    style="width:6vw;height:10vh" onclick="captureSnapshotEx();">
             </div>
         </div>
     </div>
+    <script src="js/jsmanipulate.js"></script>
     <script>
         var enabled = false;
         // Load remote component that contains the dialog dependency
+
         window.nodeRequire = require;
         delete window.require;
         delete window.exports;
@@ -40,8 +75,78 @@
         var electron = nodeRequire('electron'); // Load the dialogs component of the OS
         var WebCamera = nodeRequire('webcamjs');
 
+
         var remote = electron.remote;
         var dialog = remote.dialog;
+
+        document.addEventListener("keydown", function (e) {
+            if (e.which === 123) {
+                remote.getCurrentWindow().toggleDevTools();
+            } else if (e.which === 116) {
+                location.reload();
+            }
+        });
+        function frameConverter(video, canvas) {
+
+            // Set up our frame converter
+            this.video = video;
+            this.viewport = canvas.getContext("2d");
+            this.width = canvas.width;
+            this.height = canvas.height;
+            // Create the frame-buffer canvas
+            this.framebuffer = document.createElement("canvas");
+            this.framebuffer.width = this.width;
+            this.framebuffer.height = this.height;
+            this.ctx = this.framebuffer.getContext("2d");
+            // Default video effect is blur
+            this.effect = JSManipulate.blur;
+            // This variable used to pass ourself to event call-backs
+            var self = this;
+            // Start rendering when the video is playing
+            this.video.addEventListener("play", function () {
+                self.render();
+            }, false);
+
+            // Change the image effect to be applied  
+            this.setEffect = function (effect) {
+                if (effect in JSManipulate) {
+                    this.effect = JSManipulate[effect];
+                }
+            }
+            this.drawing = new Image();
+            this.drawing.src = "draw.png"; // can also be a remote URL e.g. http://
+            // Rendering call-back
+            this.render = function () {
+                if (this.video.paused || this.video.ended) {
+                    return;
+                }
+                this.renderFrame();
+                var self = this;
+                // Render every 10 ms
+                setTimeout(function () {
+                    self.render();
+                }, 10);
+            };
+
+
+            // Compute and display the next frame 
+            this.renderFrame = function () {
+                // Acquire a video frame from the video element
+                this.ctx.drawImage(this.video, 0, 0, this.video.videoWidth,
+                    this.video.videoHeight, 0, 0, this.width, this.height);
+
+                //this.ctx.drawImage(this.drawing, 0, 0);
+
+                var data = this.ctx.getImageData(0, 0, this.width, this.height);
+                // Apply image effect
+                this.effect.filter(data, this.effect.defaultValues);
+                // Render to viewport
+                this.viewport.putImageData(data, 0, 0);
+                this.viewport.drawImage(this.drawing,0,0,200,150);
+
+                return;
+            };
+        };
         var fs = remote.require('fs'); // Load the File System to execute our common tasks (CRUD)
         var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
         var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
@@ -61,6 +166,20 @@
                 });
                 WebCamera.attach('#camdemo');
                 console.log("The camera has been started");
+                //here lets add effects and push this canvas to camdemo div as well
+                video = document.getElementsByTagName("video")[0];
+                //hide video element
+                video.style.display = "none";
+                canvasParent = document.getElementById("camdemo");
+
+                var canvas = document.createElement("canvas")
+                canvas.setAttribute("id", "effects")
+                canvas.setAttribute("class", "effects")
+                canvas.height = 1280//parseInt(canvasParent.style.height, 10);
+                canvas.width = 720//parseInt(canvasParent.style.width, 10);
+                canvasParent.appendChild(canvas);
+                fc = new frameConverter(video, canvas);
+                fc.setEffect('Brightness');
                 //start_snapping();
 
             } else {
@@ -92,6 +211,7 @@
                 take_snapshot();
                 timer = setInterval(take_snapshot, 1);
             }
+
         }
         function stop_snapping() {
             if (timer) {
@@ -110,12 +230,30 @@
             response.data = new Buffer(matches[2], 'base64');
             return response;
         }
+        function captureSnapshotEx() {
+            var waitTime = 5;
+            document.getElementById("countdown").innerHTML = waitTime + '';
+            var timerLoop = 0;
+            var timer = setInterval(function () {
+                timerLoop++;
+                if ((waitTime - timerLoop) > 0) {
+                    //we still have time, lets update counter
+                    document.getElementById("countdown").innerHTML = (waitTime - timerLoop) + '';
+                } else {
+                    document.getElementById("countdown").innerHTML = '';
+                    clearInterval(timer);
+                    captureSnapshot();
+                }
+
+            }, 1000);
+        }
         function captureSnapshot() {
+
             if (enabled) {
                 WebCamera.snap(function (data_uri) {
                     var imageBuffer = processBase64Image(data_uri);
                     var timestamp = new Date().getTime().toString();
-                    fileName = "gallary/img"+timestamp+'.jpg';
+                    fileName = "gallary/img" + timestamp + '.jpg';
                     // If the user gave a name to the file, then save it !
                     fs.writeFile(fileName, imageBuffer.data, function (err) {
                         if (err) {
@@ -129,9 +267,6 @@
                 console.log("Please enable the camera first to take the snapshot !");
             }
         }
-        // document.getElementById("savefile").addEventListener('click', function () {
-        //     
-        // }, false);
         startCapture();
     </script>
 </body>
