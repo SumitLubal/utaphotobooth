@@ -3,7 +3,7 @@
 const electron = require('electron');
 const app = electron.app;  // Module to control application life.
 const BrowserWindow = electron.BrowserWindow;  // Module to create native browser window.
-
+const fs = require('fs');
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 var mainWindow = null;
@@ -21,22 +21,26 @@ app.on('window-all-closed', function () {
 // initialization and is ready to create browser windows.
 app.on('ready', function () {
   // Create the browser window.
+  let rawdata = fs.readFileSync('photobooth.json');
+  let config = JSON.parse(rawdata);
   const { w, h } = electron.screen.getPrimaryDisplay().workAreaSize;
   mainWindow = new BrowserWindow({
     width: w, height: h, webPreferences: {
       nodeIntegration: true
     }
   });
-  mainWindow.maximize();
-  mainWindow.setFullScreen(true);
+  if (config.full_screen_on_start) {
+    mainWindow.maximize();
+    mainWindow.setFullScreen(true);
+  }
   mainWindow.setMenu(null);
-  //mainWindow.webcontents.webPreferences.nodeIntegration = true;
+
+  if (config.debug)
+    mainWindow.webContents.openDevTools();
 
   // and load the index.html of the app.
   mainWindow.loadURL('file://' + __dirname + '/index.html');
 
-  // Open the DevTools.
-  //mainWindow.webContents.openDevTools();
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {

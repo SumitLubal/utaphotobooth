@@ -62,7 +62,9 @@ overflow-y: hidden;">
             </div>
         </div>
     </div>
+    <script src="js/jquery-3.4.1.min.js"></script>
     <script src="js/jsmanipulate.js"></script>
+    <script src="js/sly.min.js"></script>
     <script>
         var enabled = false;
         // Load remote component that contains the dialog dependency
@@ -71,14 +73,17 @@ overflow-y: hidden;">
         delete window.require;
         delete window.exports;
         delete window.module;
-
         var electron = nodeRequire('electron'); // Load the dialogs component of the OS
         var WebCamera = nodeRequire('webcamjs');
-
-
         var remote = electron.remote;
         var dialog = remote.dialog;
-
+        var fs = remote.require('fs'); // Load the File System to execute our common tasks (CRUD)
+        var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+        var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+        var timer = null;
+        // read config file 
+        let rawdata = fs.readFileSync('photobooth.json');
+        let config = JSON.parse(rawdata);
         document.addEventListener("keydown", function (e) {
             if (e.which === 123) {
                 remote.getCurrentWindow().toggleDevTools();
@@ -113,9 +118,8 @@ overflow-y: hidden;">
                     this.effect = JSManipulate[effect];
                 }
             }
-            this.drawing = new Image();
-            this.drawing.src = "draw.png"; // can also be a remote URL e.g. http://
-            // Rendering call-back
+
+
             this.render = function () {
                 if (this.video.paused || this.video.ended) {
                     return;
@@ -128,7 +132,8 @@ overflow-y: hidden;">
                 }, 10);
             };
 
-
+            this.drawing = new Image();
+            this.drawing.src = config.stickers[0].location;
             // Compute and display the next frame 
             this.renderFrame = function () {
                 // Acquire a video frame from the video element
@@ -142,15 +147,12 @@ overflow-y: hidden;">
                 this.effect.filter(data, this.effect.defaultValues);
                 // Render to viewport
                 this.viewport.putImageData(data, 0, 0);
-                this.viewport.drawImage(this.drawing,0,0,200,150);
+                this.viewport.drawImage(this.drawing, 0, 0, 200, 150);
 
                 return;
             };
         };
-        var fs = remote.require('fs'); // Load the File System to execute our common tasks (CRUD)
-        var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-        var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-        var timer = null;
+
         function startCapture() {
             if (!enabled) {
                 enabled = true;
@@ -179,9 +181,6 @@ overflow-y: hidden;">
                 canvas.width = 720//parseInt(canvasParent.style.width, 10);
                 canvasParent.appendChild(canvas);
                 fc = new frameConverter(video, canvas);
-                fc.setEffect('Brightness');
-                //start_snapping();
-
             } else {
                 enabled = false;
                 WebCamera.reset();
@@ -253,8 +252,9 @@ overflow-y: hidden;">
                 WebCamera.snap(function (data_uri) {
                     var imageBuffer = processBase64Image(data_uri);
                     var timestamp = new Date().getTime().toString();
-                    fileName = "gallary/img" + timestamp + '.jpg';
+                    fileName = config.save_location + "/img" + timestamp + '.jpg';
                     // If the user gave a name to the file, then save it !
+                    if (!fs.existsSync(config.save_location)) fs.mkdir(config.save_location);
                     fs.writeFile(fileName, imageBuffer.data, function (err) {
                         if (err) {
                             console.log("Cannot save the file :'( time to cry !");
