@@ -1,6 +1,7 @@
 # Logs
 bin/
 include/
+gallary/
 logs
 *.log
 npm-debug.log*
