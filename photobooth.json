@@ -1,5 +1,6 @@
 {
     "debug": true,
+    "full_screen_on_start": false,
     "save_location": "gallary",
     "camera_default": {
         "resolution_width": "",
@@ -46,7 +47,6 @@
         "vignette",
         "waterripple"
     ],
-    "full_screen_on_start": false,
     "stickers": [
         {
             "name": "Grad 2019",

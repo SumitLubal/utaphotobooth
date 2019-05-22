@@ -117,34 +117,8 @@ function startCapture() {
 }
 var ctx = null;
 var canvas = null;
-function take_snapshot() {
-    // take snapshot and get image data
-    if (enabled) {
-        WebCamera.snap(function (data_uri) {
-            // display results in page
-            var img = new Image();
-            img.src = data_uri;
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        });
-    }
-}
-function start_snapping() {
 
-    if (!timer) {
-        canvas = document.getElementById("myCanvas");
-        ctx = canvas.getContext("2d");
 
-        take_snapshot();
-        timer = setInterval(take_snapshot, 1);
-    }
-
-}
-function stop_snapping() {
-    if (timer) {
-        clearTimeout(timer);
-        timer = null;
-    }
-}
 
 
 function processBase64Image(dataString) {
@@ -177,19 +151,21 @@ function captureSnapshot() {
 
     if (enabled) {
         //we need to take snapshot of entire canvas
-        WebCamera.snap(function (data_uri) {
-            var imageBuffer = processBase64Image(data_uri);
-            var timestamp = new Date().getTime().toString();
-            fileName = config.save_location + "/img" + timestamp + '.jpg';
-            // If the user gave a name to the file, then save it !
-            if (!fs.existsSync(config.save_location)) fs.mkdir(config.save_location);
-            fs.writeFile(fileName, imageBuffer.data, function (err) {
-                if (err) {
-                    console.log("Cannot save the file :'( time to cry !");
-                } else {
-                    console.log("Image saved succesfully");
-                }
-            });
+        var c = document.getElementById("mainCanvas");
+        var d = c.toDataURL("image/png");
+        var imageBuffer = processBase64Image(d);
+        var timestamp = new Date().getTime().toString();
+        fileName = config.save_location + "/img" + timestamp + '.jpg';
+        // If the user gave a name to the file, then save it !
+        if (!fs.existsSync(config.save_location)) fs.mkdir(config.save_location);
+        fs.writeFile(fileName, imageBuffer.data, function (err) {
+            if (err) {
+                console.log("Cannot save the file :'( time to cry !");
+            } else {
+                console.log("Image saved succesfully");
+                // invoke another preview window and display it for preview_time also allow user to either print or recap image
+                
+            }
         });
     } else {
         console.log("Please enable the camera first to take the snapshot !");
