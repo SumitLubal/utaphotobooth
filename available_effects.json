@@ -1,10 +1,4 @@
 {
-    "debug": true,
-    "save_location": "gallary",
-    "camera_default": {
-        "resolution_width": "",
-        "resolution_height": ""
-    },
     "enabled_effects": [
         "none",
         "blur",
@@ -12,6 +6,7 @@
         "bump",
         "circlesmear",
         "contrast",
+        "crosssmear",
         "diffusion",
         "dither",
         "edge",
@@ -24,9 +19,12 @@
         "invert",
         "kaleidoscope",
         "lensdistortion",
+        "linesmear",
         "maximum",
+        "median",
         "minimum",
         "noise",
+        "oil",
         "opacity",
         "pinch",
         "pixelate",
@@ -46,15 +44,4 @@
         "vignette",
         "waterripple"
     ],
-    "full_screen_on_start": false,
-    "stickers": [
-        {
-            "name": "Grad 2019",
-            "location": "stickers/draw.png",
-            "start_x": "0",
-            "start_y": "0",
-            "size_x": "100",
-            "size_y": "60"
-        }
-    ]
 }

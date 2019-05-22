@@ -1,13 +1,13 @@
 jQuery(function ($) {
     'use strict';
     (function () {
-        var effectsArray = ['none'];
+        var effectsArray = [];
         // first load our list
-        for (var effect in JSManipulate) {
+        for (var effect in config.enabled_effects) {
             // add effect to list
             var node = document.createElement("li");
-            var textnode = document.createTextNode("" + effect);
-            effectsArray.push(""+effect);
+            var textnode = document.createTextNode("" + config.enabled_effects[effect]);
+            effectsArray.push(""+config.enabled_effects[effect]);
             node.appendChild(textnode);
             document.getElementById("effectlist").appendChild(node);
         }

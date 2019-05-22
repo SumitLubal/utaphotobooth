@@ -1,21 +1,9 @@
 var enabled = false;
-// Load remote component that contains the dialog dependency
 
-window.nodeRequire = require;
-delete window.require;
-delete window.exports;
-delete window.module;
-var electron = nodeRequire('electron'); // Load the dialogs component of the OS
-var WebCamera = nodeRequire('webcamjs');
-var remote = electron.remote;
-var dialog = remote.dialog;
-var fs = remote.require('fs'); // Load the File System to execute our common tasks (CRUD)
 var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
 var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
 var timer = null;
-// read config file 
-let rawdata = fs.readFileSync('photobooth.json');
-let config = JSON.parse(rawdata);
+
 document.addEventListener("keydown", function (e) {
     if (e.which === 123) {
         remote.getCurrentWindow().toggleDevTools();
@@ -114,7 +102,7 @@ function startCapture() {
         canvasParent = document.getElementById("camdemo");
 
         var canvas = document.createElement("canvas")
-        canvas.setAttribute("id", "effects")
+        canvas.setAttribute("id", "mainCanvas")
         canvas.setAttribute("class", "effects")
         canvas.height = 1280//parseInt(canvasParent.style.height, 10);
         canvas.width = 720//parseInt(canvasParent.style.width, 10);
@@ -188,6 +176,7 @@ function captureSnapshotEx() {
 function captureSnapshot() {
 
     if (enabled) {
+        //we need to take snapshot of entire canvas
         WebCamera.snap(function (data_uri) {
             var imageBuffer = processBase64Image(data_uri);
             var timestamp = new Date().getTime().toString();
