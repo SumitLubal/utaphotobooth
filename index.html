@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-    <meta charset="UTF-8">
-    <title>Our Code World Camera Demo</title>
-    <style>
+    <head>
+        <meta charset="UTF-8">
+        <title>Our Code World Camera Demo</title>
+        <style>
         .footer {
             position: fixed;
             left: 0;
@@ -43,29 +43,32 @@
             height: 100%;
         }
     </style>
-</head>
+    </head>
 
-<body style="margin:0;    display: -webkit-box;    overflow-x: hidden;
-overflow-y: hidden;">
-    <br>
-    <div>
-        <!-- Create a camera element centered -->
-        <div>
-            <div class="topleft" id='countdown'></div>
-            <div id="camdemo" style="width: vw; height:100vh; text-align: center; margin: 0 auto;"></div>
-        </div>
+    <body style="margin:0; display: -webkit-box; overflow-x: hidden;
+        overflow-y: hidden;">
         <br>
-        <div class="footer  noselect">
-            <div style="text-align:center;">
-                <input type="image" id="capture" src="images/capture_button.png" alt="Submit"
-                    style="width:6vw;height:10vh" onclick="captureSnapshotEx();">
+        <div>
+            <!-- Create a camera element centered -->
+            <div>
+                <div class="topleft" id='countdown'></div>
+                <div id="camdemo" style="width: vw; height:100vh; text-align:
+                    center; margin: 0 auto;"></div>
+            </div>
+            <br>
+            <div class="footer noselect">
+                <div style="text-align:center;">
+                    <input type="image" id="capture"
+                        src="images/capture_button.png" alt="Submit"
+                        style="width:6vw;height:10vh"
+                        onclick="captureSnapshotEx();">
+                </div>
             </div>
         </div>
-    </div>
-    <script src="js/jquery-3.4.1.min.js"></script>
-    <script src="js/jsmanipulate.js"></script>
-    <script src="js/sly.min.js"></script>
-    <script>
+        <script src="js/jquery-3.4.1.min.js"></script>
+        <script src="js/jsmanipulate.js"></script>
+        <script src="js/sly.min.js"></script>
+        <script>
         var enabled = false;
         // Load remote component that contains the dialog dependency
 
@@ -269,6 +272,6 @@ overflow-y: hidden;">
         }
         startCapture();
     </script>
-</body>
+    </body>
 
 </html>
