@@ -5,6 +5,10 @@
     <meta charset="UTF-8">
     <title>Our Code World Camera Demo</title>
     <style>
+        *:focus {
+            outline: none;
+        }
+
         .footer {
             position: fixed;
             left: 0;
@@ -65,6 +69,7 @@
         }
     </style>
     <link rel="stylesheet" href="css/horizontal.css">
+    <link rel="stylesheet" href="css/bootstrap.css">
 </head>
 
 <body style="margin:0; display: -webkit-box; overflow-x: hidden;
@@ -79,21 +84,28 @@
         </div>
         <br>
         <div class="footer noselect">
-            <div class="collapsable">
-                <div class="scrollbar">
-                    <div class="handle" style="transform: translateZ(0px) translateX(0px); width: 190px;">
-                        <div class="mousearea"></div>
-                    </div>
-                </div>
-                <div class="frame" id="forcecentered" style="overflow: hidden;">
+            <div class="" id="collapsableFilters">
+                <div class="frame" id="effects_row" style="overflow: hidden;">
                     <ul class="clearfix" id="effectlist" style="transform: translateZ(0px)
                         translateX(457px); width: 6840px;">
                     </ul>
                 </div>
             </div>
+            <div class="" id="collapsableStickers">
+                <div class="frame" id="stickers_row" style="overflow: hidden;">
+                    <ul class="clearfix" id="stickerslist" style="transform: translateZ(0px)
+                            translateX(457px); width: 6840px;">
+                    </ul>
+                </div>
+            </div>
             <div style="text-align:center;">
+                <input type="image" id="button_collapseSticker" data-toggle="collapse"
+                    data-target="#collapsableStickers" src="images/arrow_up.png" alt="Submit"
+                    style="width:6vw;height:10vh">
                 <input type="image" id="capture" src="images/capture_button.png" alt="Submit"
                     style="width:6vw;height:10vh" onclick="captureSnapshotEx();">
+                <input type="image" id="button_collapseFilter" data-toggle="collapse" data-target="#collapsableFilters"
+                    src="images/arrow_up.png" alt="Submit" style="width:6vw;height:10vh">
             </div>
         </div>
     </div>
@@ -102,8 +114,6 @@
             window.module = module;
             module = undefined;
         }
-    </script>
-    <script>
         // Load remote component that contains the dialog dependency
         window.nodeRequire = require;
         delete window.require;
@@ -111,22 +121,23 @@
         delete window.module;
         var electron = nodeRequire('electron'); // Load the dialogs component of the OS
         var WebCamera = nodeRequire('webcamjs');
+        const jetpack = nodeRequire('fs-jetpack');
         var remote = electron.remote;
         var dialog = remote.dialog;
         var fs = remote.require('fs'); // Load the File System to execute our common tasks (CRUD)
         // read config file 
         let rawdata = fs.readFileSync('photobooth.json');
         config = JSON.parse(rawdata);
+        if (window.module) module = window.module;
     </script>
     <script src="js/jquery-3.4.1.min.js"></script>
+    <script src="js/bootstrap.js"></script>
     <script src="js/jsmanipulate.js"></script>
     <script src="js/sly.min.js"></script>
     <script src="js/jquery.easing.1.3.js"></script>
     <script src="js/horizontal.js"></script>
     <script src="js/camera.js"></script>
-    <script>
-        if (window.module) module = window.module;
-    </script>
+    <script src="js/custom.js"></script>
 </body>
 
 </html>

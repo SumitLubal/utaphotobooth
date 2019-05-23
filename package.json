@@ -15,6 +15,7 @@
     "electron-builder": "^20.40.2"
   },
   "dependencies": {
+    "fs-jetpack": "^2.2.2",
     "seriously": "^1.0.0",
     "webcamjs": "^1.0.6"
   },

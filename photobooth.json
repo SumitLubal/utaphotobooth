@@ -1,6 +1,6 @@
 {
-    "debug": true,
-    "full_screen_on_start": false,
+    "debug": false,
+    "full_screen_on_start": true,
     "save_location": "gallary",
     "camera_default": {
         "resolution_width": "",
@@ -51,10 +51,22 @@
         {
             "name": "Grad 2019",
             "location": "stickers/draw.png",
-            "start_x": "0",
-            "start_y": "0",
-            "size_x": "100",
-            "size_y": "60"
+            "start_x": 0,
+            "start_y": 0,
+            "size_x": 200,
+            "size_y": 120
+        },
+        {
+            "name": "none",
+            "descr": "this is empty sticker and needs to be there for no effects"
+        },
+        {
+            "name": "New baby",
+            "location": "stickers/draw.png",
+            "start_x": 0,
+            "start_y": 0,
+            "size_x": 100,
+            "size_y": 60
         }
     ]
 }

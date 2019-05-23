@@ -25,6 +25,7 @@ function frameConverter(video, canvas) {
     this.ctx = this.framebuffer.getContext("2d");
     // Default video effect is blur
     this.effect = null;
+    this.sticker = null
     // This variable used to pass ourself to event call-backs
     var self = this;
     // Start rendering when the video is playing
@@ -42,6 +43,21 @@ function frameConverter(video, canvas) {
         if (effect in JSManipulate) {
             this.effect = JSManipulate[effect];
         }
+    }
+    this.setSticker = function (sticker) {
+        if (sticker.name == 'none') {
+            this.sticker = null;
+            console.error('will draw nothing');
+            return;
+        }
+        //validate sticker exists or not
+        if (!jetpack.exists(sticker.location)) {
+            this.sticker = null;
+            console.error('Make sure sticker is located at given location');
+            return;
+        }
+        this.sticker = sticker;
+        this.drawing.src = sticker.location;
     }
 
 
@@ -74,7 +90,9 @@ function frameConverter(video, canvas) {
         }
         // Render to viewport
         this.viewport.putImageData(data, 0, 0);
-        this.viewport.drawImage(this.drawing, 0, 0, 200, 150);
+        if (this.sticker != null) {
+            this.viewport.drawImage(this.drawing, this.sticker.start_x, this.sticker.start_y, this.sticker.size_x, this.sticker.size_y);
+        }
 
         return;
     };
@@ -157,16 +175,10 @@ function captureSnapshot() {
         var timestamp = new Date().getTime().toString();
         fileName = config.save_location + "/img" + timestamp + '.jpg';
         // If the user gave a name to the file, then save it !
-        if (!fs.existsSync(config.save_location)) fs.mkdir(config.save_location);
-        fs.writeFile(fileName, imageBuffer.data, function (err) {
-            if (err) {
-                console.log("Cannot save the file :'( time to cry !");
-            } else {
-                console.log("Image saved succesfully");
-                // invoke another preview window and display it for preview_time also allow user to either print or recap image
-                
-            }
-        });
+        if (!fs.existsSync(config.save_location))
+            jetpack
+                .dir(config.save_location)
+        jetpack.write(fileName, imageBuffer.data);
     } else {
         console.log("Please enable the camera first to take the snapshot !");
     }
