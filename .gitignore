@@ -210,3 +210,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+raspberry_module/lib64
+raspberry_module/pyvenv.cfg
