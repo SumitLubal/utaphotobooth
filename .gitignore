@@ -2,6 +2,7 @@
 bin/
 include/
 gallary/
+raspberry_module/share
 logs
 *.log
 npm-debug.log*
