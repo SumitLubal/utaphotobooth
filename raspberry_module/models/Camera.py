@@ -1,0 +1,1 @@
+#camera class for python
