@@ -1,0 +1,28 @@
+{
+  "name": "UTA-photobooth",
+  "version": "1.0.0",
+  "description": "A simple app to have in-house photobooth",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron main.js",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "author": "Sumeet Lubal",
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "electron": "v4.2.1",
+    "electron-builder": "^20.40.2"
+  },
+  "dependencies": {
+    "fs-jetpack": "^2.2.2",
+    "seriously": "^1.0.0",
+    "webcamjs": "^1.0.6"
+  },
+  "build": {
+    "appId": "uta.sumeetlubal.photobooth",
+    "mac": {
+      "category": "your.app.category.type"
+    }
+  }
+}
