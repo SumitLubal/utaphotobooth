@@ -1,0 +1,13 @@
+photobooth.cfg
+**/*.pyc
+**/__pycache__
+.eggs
+.venv
+photobooth.egg-info
+*.log
+*.log.20??-??-??
+print_*.pdf
+20??-??-??
+build
+dist
+
