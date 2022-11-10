@@ -11,7 +11,7 @@
   "author": "Sumeet Lubal",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "v4.2.1",
+    "electron": "v18.3.7",
     "electron-builder": "^20.40.2"
   },
   "dependencies": {
